@@ -36,8 +36,7 @@ MIN_CURRENT     = float(os.getenv("MIN_CURRENT",      "1.0"))  # current ratio
 EMAIL_FROM    = os.getenv("EMAIL_FROM", "")
 EMAIL_TO      = os.getenv("EMAIL_TO",   "")
 EMAIL_PASS    = os.getenv("EMAIL_PASS", "")
-SMTP_HOST     = os.getenv("SMTP_HOST",  "smtp.gmail.com")
-SMTP_PORT     = int(os.getenv("SMTP_PORT", "465"))
+SMTP_HOST     = os.getenv("SMTP_HOST", "smtp.gmail.com")
 
 
 # ── S&P 500 ticker list ────────────────────────────────────────────────────────
@@ -303,7 +302,7 @@ def send_email(subject: str, html_body: str, text_body: str) -> None:
     msg.attach(MIMEText(html_body, "html",   "utf-8"))
 
     recipients = EMAIL_TO.split(",")
-    with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
+    with smtplib.SMTP_SSL(SMTP_HOST, 465) as server:
         server.login(EMAIL_FROM, EMAIL_PASS)
         server.sendmail(EMAIL_FROM, recipients, msg.as_string())
 
