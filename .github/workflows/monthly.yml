@@ -1,0 +1,46 @@
+name: Monthly Dividend Screener
+
+on:
+  schedule:
+    # 毎月1日 09:00 JST (= 00:00 UTC)
+    - cron: "0 0 1 * *"
+  workflow_dispatch:   # 手動実行も可能
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run screener
+        env:
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO:   ${{ secrets.EMAIL_TO }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          SMTP_HOST:  ${{ secrets.SMTP_HOST }}
+          SMTP_PORT:  ${{ secrets.SMTP_PORT }}
+          # スクリーニング条件は必要に応じてここで上書き可能
+          # MIN_YIELD: "3.0"
+          # MIN_STREAK: "10"
+        run: python screener.py
+
+      - name: Upload results CSV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screening-results-${{ github.run_id }}
+          path: results.csv
+          if-no-files-found: ignore
+          retention-days: 90
