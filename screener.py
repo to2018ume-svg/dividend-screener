@@ -302,11 +302,20 @@ def send_email(subject: str, html_body: str, text_body: str) -> None:
     msg.attach(MIMEText(text_body, "plain",  "utf-8"))
     msg.attach(MIMEText(html_body, "html",   "utf-8"))
 
-    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-        server.ehlo()
-        server.starttls()
-        server.login(EMAIL_FROM, EMAIL_PASS)
-        server.sendmail(EMAIL_FROM, EMAIL_TO.split(","), msg.as_string())
+    recipients = EMAIL_TO.split(",")
+    # Port 465 → SMTP_SSL (implicit TLS)
+    # Port 587 / others → SMTP + STARTTLS
+    if SMTP_PORT == 465:
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
+            server.login(EMAIL_FROM, EMAIL_PASS)
+            server.sendmail(EMAIL_FROM, recipients, msg.as_string())
+    else:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(EMAIL_FROM, EMAIL_PASS)
+            server.sendmail(EMAIL_FROM, recipients, msg.as_string())
 
     log.info("Email sent to %s", EMAIL_TO)
 
