@@ -302,7 +302,10 @@ def send_email(subject: str, html_body: str, text_body: str) -> None:
     msg.attach(MIMEText(html_body, "html",   "utf-8"))
 
     recipients = EMAIL_TO.split(",")
-    with smtplib.SMTP_SSL(SMTP_HOST, 465) as server:
+    with smtplib.SMTP(SMTP_HOST, 587) as server:
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
         server.login(EMAIL_FROM, EMAIL_PASS)
         server.sendmail(EMAIL_FROM, recipients, msg.as_string())
 
