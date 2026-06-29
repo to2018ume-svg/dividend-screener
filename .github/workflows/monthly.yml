@@ -29,8 +29,7 @@ jobs:
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO:   ${{ secrets.EMAIL_TO }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          SMTP_HOST:  ${{ secrets.SMTP_HOST }}
-          SMTP_PORT:  ${{ secrets.SMTP_PORT }}
+          # SMTP_HOST/SMTP_PORT は渡さない（screener.py のデフォルト smtp.gmail.com:587 を使用）
           # スクリーニング条件は必要に応じてここで上書き可能
           # MIN_YIELD: "3.0"
           # MIN_STREAK: "10"
