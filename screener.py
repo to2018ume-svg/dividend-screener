@@ -302,7 +302,9 @@ def send_email(subject: str, html_body: str, text_body: str) -> None:
     msg.attach(MIMEText(html_body, "html",   "utf-8"))
 
     recipients = EMAIL_TO.split(",")
-    with smtplib.SMTP(SMTP_HOST, 587) as server:
+    log.info("Connecting to SMTP host=%r port=587 (timeout=10s)", SMTP_HOST)
+    with smtplib.SMTP(SMTP_HOST, 587, timeout=10) as server:
+        log.info("TCP connection established to %s", SMTP_HOST)
         server.ehlo()
         server.starttls()
         server.ehlo()
